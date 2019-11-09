@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -84,17 +82,4 @@ func main() {
 	httpprt := strconv.Itoa(config.HTTPPort)
 	LogInfo("Server started HTTP on port (" + httpprt + ")")
 	log.Fatal(http.ListenAndServe(":"+httpprt, router))
-}
-
-func readConfig(file string) Config {
-	dat, err := ioutil.ReadFile(file)
-	if err != nil {
-		panic(err)
-	}
-	res := Config{}
-	err = json.Unmarshal(dat, &res)
-	if err != nil {
-		panic(err)
-	}
-	return res
 }

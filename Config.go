@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -50,4 +51,17 @@ func createConfig() error {
 	}
 
 	return nil
+}
+
+func readConfig(file string) Config {
+	dat, err := ioutil.ReadFile(file)
+	if err != nil {
+		panic(err)
+	}
+	res := Config{}
+	err = json.Unmarshal(dat, &res)
+	if err != nil {
+		panic(err)
+	}
+	return res
 }
