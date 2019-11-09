@@ -21,9 +21,9 @@ type Config struct {
 	TLSPort       int    `json:"porttls"`
 }
 
-func createConfig() error {
-	LogError("Couldn't find config.json")
-	f, err := os.Create("config.json")
+func createConfig(configFile string) error {
+	LogError("Couldn't find " + configFile)
+	f, err := os.Create(configFile)
 	if err != nil {
 		return err
 	}

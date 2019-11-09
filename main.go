@@ -13,6 +13,7 @@ import (
 var showTimeInLog = false
 var logPrefix = ""
 var config Config
+var configFile = "config.json"
 
 func main() {
 	ctx := context.Background()
@@ -25,9 +26,9 @@ func main() {
 		}
 	})
 
-	_, err := os.Stat("./config.json")
+	_, err := os.Stat(configFile)
 	if err != nil {
-		err = createConfig()
+		err = createConfig(configFile)
 		if err != nil {
 			LogCritical("Couldn't create config: " + err.Error())
 		} else {
@@ -36,7 +37,7 @@ func main() {
 		return
 	}
 
-	config = readConfig("config.json")
+	config = readConfig(configFile)
 	showTimeInLog = config.ShowTimeInLog
 
 	initDB(config)
