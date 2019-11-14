@@ -71,9 +71,15 @@ func main() {
 				os.Exit(1)
 			}
 			tlsprt := strconv.Itoa(config.TLSPort)
-			log.Fatal(http.ListenAndServeTLS(":"+tlsprt, config.CertFile, config.KeyFile, router))
 			LogInfo("Server started TLS on port (" + tlsprt + ")")
+			log.Fatal(http.ListenAndServeTLS(":"+tlsprt, config.CertFile, config.KeyFile, router))
 		})()
+	}
+
+	if useTLS && config.HTTPPort < 2 {
+		for {
+
+		}
 	}
 
 	if config.HTTPPort < 2 {
