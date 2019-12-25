@@ -114,6 +114,18 @@ func isEmptyValue(e reflect.Value) bool {
 		{
 			return false
 		}
+	case reflect.Uint64:
+		{
+			return false
+		}
+	case reflect.Uint:
+		{
+			return false
+		}
+	case reflect.Uint8:
+		{
+			return false
+		}
 	default:
 		fmt.Println(e.Type().Kind(), e)
 		return true
