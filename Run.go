@@ -16,22 +16,18 @@ type runT struct {
 	cli.Helper
 }
 
-func runCmd(config *ConfigStruct, db *dbhelper.DBhelper) {
+func runCmd(config *ConfigStruct, db *dbhelper.DBhelper, debug bool) {
 	ctx := initExitCallback(db)
 	defer goodbye.Exit(ctx, -1)
-
-	isConnected := isConnectedToDB() == nil
-	if !isConnected {
-		LogError("Couldn't connect to DB!")
-		return
-	}
 
 	router := NewRouter()
 
 	if config.TLS.Enabled {
 		go (func() {
 			address := config.TLS.ListenAddress + strconv.Itoa(config.TLS.Port)
-			log.Printf("Server started TLS on port (%s)\n", address)
+			if debug {
+				log.Printf("Server started TLS on port (%s)\n", address)
+			}
 			log.Fatal(http.ListenAndServeTLS(address, config.TLS.CertFile, config.TLS.KeyFile, router))
 		})()
 	}
@@ -44,7 +40,9 @@ func runCmd(config *ConfigStruct, db *dbhelper.DBhelper) {
 
 	if config.HTTP.Enabled {
 		address := config.HTTP.ListenAddress + strconv.Itoa(config.HTTP.Port)
-		log.Printf("Server started HTTP on port (%s)\n", address)
+		if debug {
+			log.Printf("Server started HTTP on port (%s)\n", address)
+		}
 		log.Fatal(http.ListenAndServe(address, router))
 	}
 

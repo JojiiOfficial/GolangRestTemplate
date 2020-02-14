@@ -73,7 +73,7 @@ func main() {
 	//Server --------------------
 	case serverCmdStart.FullCommand():
 		{
-			runCmd(config, db)
+			runCmd(config, db, *appDebug)
 		}
 	//Config --------------------
 	case configCmdCreate.FullCommand():

@@ -11,6 +11,3 @@ func getInitSQL() dbhelper.QueryChain {
 		Queries: dbhelper.CreateInitVersionSQL(),
 	}
 }
-func isConnectedToDB() error {
-	return nil
-}

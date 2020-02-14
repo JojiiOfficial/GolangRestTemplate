@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	dbhelper "github.com/JojiiOfficial/GoDBHelper"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func connectDB(config *ConfigStruct) (*dbhelper.DBhelper, error) {
