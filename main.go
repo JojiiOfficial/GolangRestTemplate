@@ -27,6 +27,12 @@ var (
 	//Server start
 	serverCmd      = app.Command("server", "Commands for the server")
 	serverCmdStart = serverCmd.Command("start", "Start the server")
+
+	//Config commands
+	//Config create
+	configCmd           = app.Command("config", "Commands for the config file")
+	configCmdCreate     = configCmd.Command("create", "Create config file")
+	configCmdCreateName = configCmdCreate.Arg("name", "Config filename").Default(getDefaultConfig()).String()
 )
 
 func main() {
@@ -41,24 +47,26 @@ func main() {
 		db     *dbhelper.DBhelper
 	)
 
-	var shouldExit bool
-	config, shouldExit = InitConfig(*appCfgFile, false)
-	if shouldExit {
-		return
-	}
-
-	if !config.Check() {
-		if *appDebug {
-			log.Println("Exiting")
+	if parsed != configCmdCreate.FullCommand() {
+		var shouldExit bool
+		config, shouldExit = InitConfig(*appCfgFile, false)
+		if shouldExit {
+			return
 		}
-		return
-	}
 
-	var err error
-	db, err = connectDB(config)
-	if err != nil {
-		log.Fatalln(err.Error())
-		return
+		if !config.Check() {
+			if *appDebug {
+				log.Println("Exiting")
+			}
+			return
+		}
+
+		var err error
+		db, err = connectDB(config)
+		if err != nil {
+			log.Fatalln(err.Error())
+			return
+		}
 	}
 
 	switch parsed {
@@ -66,6 +74,12 @@ func main() {
 	case serverCmdStart.FullCommand():
 		{
 			runCmd(config, db)
+		}
+	//Config --------------------
+	case configCmdCreate.FullCommand():
+		{
+			//whsub config create
+			InitConfig(*configCmdCreateName, true)
 		}
 	}
 }

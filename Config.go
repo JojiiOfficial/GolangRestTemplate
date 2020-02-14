@@ -23,7 +23,7 @@ type configDBstruct struct {
 	Username     string `required:"true"`
 	Database     string `required:"true"`
 	Pass         string `required:"true"`
-	DatabasePort int    `default:"3306"`
+	DatabasePort int    `required:"true" default:"3306"`
 }
 
 //Config for HTTPS
@@ -43,7 +43,7 @@ type configHTTPstruct struct {
 }
 
 func getDefaultConfig() string {
-	return path.Join(getDataPath(), DefaultConfigFile)
+	return path.Join(DataDir, DefaultConfigFile)
 }
 
 //InitConfig inits the config
@@ -53,6 +53,7 @@ func InitConfig(confFile string, createMode bool) (*ConfigStruct, bool) {
 	if len(confFile) == 0 {
 		confFile = getDefaultConfig()
 	}
+
 	if createMode {
 		s, err := os.Stat(confFile)
 		if err == nil {
@@ -66,6 +67,22 @@ func InitConfig(confFile string, createMode bool) (*ConfigStruct, bool) {
 		if !strings.HasSuffix(confFile, ".yml") {
 			log.Fatalln("The configfile must end with .yml")
 			return nil, true
+		}
+		config = ConfigStruct{
+			Database: configDBstruct{
+				Host:         "localhost",
+				DatabasePort: 3306,
+			},
+			HTTP: configHTTPstruct{
+				Enabled:       true,
+				ListenAddress: "127.0.0.1:",
+				Port:          80,
+			},
+			TLS: configTLSStruct{
+				Enabled:       false,
+				ListenAddress: ":",
+				Port:          443,
+			},
 		}
 	}
 
@@ -111,6 +128,11 @@ func (config *ConfigStruct) Check() bool {
 			log.Println("Can't find the SSL key. File not found")
 			return false
 		}
+	}
+
+	if config.Database.DatabasePort < 1 || config.Database.DatabasePort > 65535 {
+		log.Printf("Invalid port for database %d\n", config.Database.DatabasePort)
+		return false
 	}
 
 	return true
